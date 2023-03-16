@@ -1,4 +1,25 @@
-.image {
-  width: 500px;
-  height: 500px;
+/* Set the App container to fill the entire viewport */
+.App {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-start;
+  height: 100vh;
+  margin: 0;
+}
+
+/* Style the Comment component */
+.Comment {
+  margin-right: 2em;
+}
+
+/* Style the CompareTips component */
+.CompareTips {
+  margin-left: 2em;
+}
+
+/* Style the ComparePicture component */
+.ComparePicture {
+  flex-basis: 25%;
+  margin-right: 2em;
 }

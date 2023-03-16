@@ -51,7 +51,7 @@ function UserList({users, onEdit, onRemove}) { //users는 write해준 후 가져
       ))}
     </div>
   );
-} 
+} //수정해야함 
 
 function CommentBoard({users, onEdit, onRemove}){
   return(
@@ -84,12 +84,10 @@ function Comment(){
     setUsers(users.filter(user => user.id !== id));
   };
 
-  const onEdit = (id, newComment) =>{
-    //1. id에 맞는 user 행을 가져와
-    //2. id에 맞는 user 행을 바꿔
-    //3. setUsers 에 전달해 
+  const onEdit = (id) =>{ //에러발생 -> 수정 예정
     const updatedUsers = [...users];
     const targetIdx = updatedUsers.findIndex(item=> item.id === id);
+    const newComment=1
     updatedUsers[targetIdx]=newComment;
     setUsers(updatedUsers);
   } ;
