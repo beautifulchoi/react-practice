@@ -1,20 +1,15 @@
-import React from 'react';
-import Counter from './Counter';
-import Map from './Map'
-import InputSample from './InputSample';
-import ComparePic from './ComparePic';
+import React, { useRef, useState } from 'react';
 import UserList from './UserList';
+import CreateUser from './CreateUser';
+import Comment from './Comment.js'
+//import Comment from './Comment copy'
+import ComparePic from './ComparePic';
+import PictureCompare from './ComparePic copy';
 function App() {
-  
   return (
     <>
-      <title>livinglab</title>
-      {/*<Map/>*/}
-      {/*<Counter/>*/}
-      {/*<InputSample/>*/}
-      {/*<ComparePic/>*/}
-      <UserList/>
-
+      <Comment/>
+      <PictureCompare/>
     </>
   );
 }
