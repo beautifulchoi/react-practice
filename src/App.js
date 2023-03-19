@@ -6,19 +6,30 @@ import Comment from './Comment copy'
 //import ComparePic from './ComparePic';
 import './App.css';
 import {ComparePicture,CompareTips} from './ComparePic copy.js';
+import Map from './Map'
+
 function App() {
   const tips = [
     { title: 'Tip 1', content: 'This is the content for Tip 1.' },
     { title: 'Tip 2', content: 'This is the content for Tip 2.' },
     { title: 'Tip 3', content: 'This is the content for Tip 3.' },
   ];
+  
   return (
-    <>
-      <ComparePicture className="ComparePicture" pic1='logo192.png' pic2='logo512.png'/>
-      <CompareTips className="CompareTips" tips={tips} />
-      <Comment className="Comment"/>
-    </>
+    <div className="container">
+      <ComparePicture className="compare-picture" pic1='logo192.png' pic2='logo512.png' />
+      <div className="compare-container">
+        <CompareTips className="compare-tips" tips={tips} />
+        <Comment className="comment" />
+      </div>
+    </div>
   );
+    
+    //Map
+    // return(
+    //   <Map/>
+
+    // );
 }
 
 export default App;

@@ -1,5 +1,4 @@
-/* Set the App container to fill the entire viewport */
-.App {
+.container {
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
@@ -8,18 +7,40 @@
   margin: 0;
 }
 
-/* Style the Comment component */
-.Comment {
+.compare-picture {
   margin-right: 2em;
+  width: 50%;
 }
 
-/* Style the CompareTips component */
-.CompareTips {
-  margin-left: 2em;
+.compare-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  width: 50%;
 }
 
-/* Style the ComparePicture component */
-.ComparePicture {
-  flex-basis: 25%;
-  margin-right: 2em;
+.compare-tips {
+  margin-bottom: 2em;
+}
+
+.comment {
+  margin-bottom: 2em;
+}
+
+/* Media queries for smaller screen sizes */
+@media screen and (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
+  
+  .compare-picture {
+    margin-right: 0;
+    margin-bottom: 2em;
+    width: 100%;
+  }
+  
+  .compare-container {
+    width: 100%;
+  }
 }

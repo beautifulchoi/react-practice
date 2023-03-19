@@ -19,6 +19,7 @@ function Map(props) {
         ))}
       </div>
     </div>
+    
   );
 }
 

@@ -5,6 +5,7 @@ function WriteComment({handleCommentSubmit, nextId}){ //정보 전달은 상위 
   const [nickname, setNickname] = useState("");
   const [password, setPassword] = useState("");
   const [comment, setComment] = useState("");
+
   const handleNicknameChange = (e) => {
     setNickname(e.target.value);
   };
@@ -16,27 +17,30 @@ function WriteComment({handleCommentSubmit, nextId}){ //정보 전달은 상위 
   };
   const handleSubmit = () => {
     handleCommentSubmit(nextId.current, nickname, password, comment);
-    setNickname("");
-    setComment("");
-    nextId.current += 1;//백엔드 서버주소 오면 삭제해야함
-
-    //서버로 댓글 정보 데이터 전송
-    const data = {id: nextId.current, nickname:nickname, password:password, comment:comment};
-    axios.post('/comments', data)
-      .then(response => {
-        // The comment was successfully submitted to the server
-        // Do something, e.g. clear the input fields or show a success message
-        console.log(response);
-        setNickname("");
-        setComment("");
-        nextId.current += 1;
-      })
-      .catch(error => {
-        // There was an error submitting the comment to the server
-        // Do something, e.g. show an error message
-        console.log(error);
-        alert(error);
-      });
+    setNickname("");//
+    setComment("");//
+    setPassword("");//
+    nextId.current += 1;//백엔드 서버주소 오면 삭제해야함 -> 동작 확인하면 삭제
+    
+  
+  //서버로 댓글 정보 데이터 전송
+  const data = {id: nextId.current, nickname:nickname, password:password, comment:comment};
+  axios.post('/comments/postData', data)
+    .then(response => {
+      // The comment was successfully submitted to the server
+      // Do something, e.g. clear the input fields or show a success message
+      console.log(response);
+      setNickname("");
+      setComment("");
+      setPassword("");
+      nextId.current += 1;
+    })
+    .catch(error => {
+      // There was an error submitting the comment to the server
+      // Do something, e.g. show an error message
+      console.log(error);
+      alert(error);
+    });
   };
   return(
     <div className="write-comment">
@@ -55,8 +59,8 @@ function WriteComment({handleCommentSubmit, nextId}){ //정보 전달은 상위 
 function User({ user,onEdit,onRemove }) {
   return (
     <div>
-      <b>{user.nickname}</b> <span>({user.comment})</span>
-      <button onClick={() => onEdit(user.id)}>편집</button> {/*onEdit 수정해아함 */}
+      <b>{user.nickname}: </b> <span>[{user.comment}]</span>
+      <button onClick={() => onEdit(user)}>편집</button> {/*onEdit 수정해아함 */}
       <button onClick={() => onRemove(user.id)}>삭제</button>
     </div>
   );
@@ -88,26 +92,26 @@ function CommentBoard({users, onEdit, onRemove}){
 
 function Comment(){ 
   const [users, setUsers] = useState([]);
+
   //리렌더링시에 댓글리스트 가져오기
   useEffect(() => {
-    //함수 async 
-    //
-    /**
-     *  await axios.get("/api/comments").then((response) => {
-      setUsers(response.data);
-    });
-     * 
-     */
-    
-    //함수(); 실행
+    async function fetchData() {
+      try {
+        await axios.get('/api/comments/fetchData').then((response) =>{
+          setUsers(response.data);
+        });
+      } catch (error) {
+        console.error(error);
+      }
+    }
 
-
-
-  }, []);//배열에 인자 넣어야함
+    console.log("useEffect!!");
+    fetchData();
+  });
   
   const handleCommentSubmit = (id,nickname, password,comment) => {
-    if ((nickname!=="")&&(comment!=="")){
-    const newUser = {id:id, nickname: nickname, password:password, comment: comment};
+    if ((nickname!=="")&&(comment!=="")&&(password!=="")){
+    const newUser = {id:id, nickname: nickname, password:password, comment: comment, isEditing:false};
     setUsers([...users, newUser]);
     }
     else if((nickname==="")){
@@ -116,12 +120,17 @@ function Comment(){
     else if((comment==="")){
       alert('코멘트를 작성해주세요');
     }
+    else if((password==="")){
+      alert('비밀번호를 입력하세요');
+    }
     
   };
   
+  
   const onRemove = id => {
-    // user.id 가 파라미터로 일치하지 않는 원소만 추출해서 새로운 배열을 만듬
-    // = user.id 가 id 인 것을 제거함
+    // pw 입력 우선적으로 실행
+    
+    // user.id 가 파라미터로 일치하지 않는 원소만 추출해서 새로운 배열 생성 후 이전 배열 업데이트
     setUsers(users.filter(user => user.id !== id));
   };
 
