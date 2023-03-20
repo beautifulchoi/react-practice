@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import axios from 'axios';
 import './Comment.css';
+
 function WriteComment({handleCommentSubmit, nextId}){ //정보 전달은 상위 컴포넌트에서
   const [nickname, setNickname] = useState("");
   const [password, setPassword] = useState("");
@@ -25,7 +26,7 @@ function WriteComment({handleCommentSubmit, nextId}){ //정보 전달은 상위 
   
   //서버로 댓글 정보 데이터 전송
   const data = {id: nextId.current, nickname:nickname, password:password, comment:comment};
-  axios.post('/comments/postData', data)
+  axios.post('http://localhost:8080/', data)
     .then(response => {
       // The comment was successfully submitted to the server
       // Do something, e.g. clear the input fields or show a success message
@@ -92,22 +93,24 @@ function CommentBoard({users, onEdit, onRemove}){
 
 function Comment(){ 
   const [users, setUsers] = useState([]);
+  const [targetUser, setTargetUser] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [password, setPassword] = useState('');
 
   //리렌더링시에 댓글리스트 가져오기
   useEffect(() => {
     async function fetchData() {
       try {
-        await axios.get('/api/comments/fetchData').then((response) =>{
+        await axios.get('http://localhost:8080/').then((response) =>{
           setUsers(response.data);
         });
       } catch (error) {
         console.error(error);
       }
     }
-
     console.log("useEffect!!");
     fetchData();
-  });
+  },[]);
   
   const handleCommentSubmit = (id,nickname, password,comment) => {
     if ((nickname!=="")&&(comment!=="")&&(password!=="")){
@@ -125,13 +128,41 @@ function Comment(){
     }
     
   };
+
+  const openModal = (id) => {
+    const target = users.find((user) => user.id === id);
+    setTargetUser(target);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setTargetUser(null);
+    setIsModalOpen(false);
+    setPassword('');
+  };
   
+  const handlePasswordChange = (event) => {
+    setPassword(event.target.value);
+  };
+
+  const handlePasswordSubmit = () => {
+    if (password === targetUser.password) {
+      setUsers(users.filter((user) => user.id !== targetUser.id));
+      closeModal();
+    } else {
+      alert('비밀번호가 일치하지 않습니다');
+      setPassword("");
+    }
+  };
   
-  const onRemove = id => {
-    // pw 입력 우선적으로 실행
-    
-    // user.id 가 파라미터로 일치하지 않는 원소만 추출해서 새로운 배열 생성 후 이전 배열 업데이트
-    setUsers(users.filter(user => user.id !== id));
+  const onRemove = (id) => {
+    const target = users.find((user) => user.id === id);
+
+    if (!target) {
+      alert('해당하는 댓글이 없습니다');
+      return;
+    }
+    openModal(id);
   };
 
   const onEdit = (id) =>{ //에러발생 -> 수정 예정
@@ -142,6 +173,11 @@ function Comment(){
     setUsers(updatedUsers);
   } ;
   
+  const onCancel = () => {
+    setTargetUser(null);
+    setIsModalOpen(false);
+    setPassword("");
+  };
 
   const nextId = useRef(0);
   //console.log(users)
@@ -149,6 +185,24 @@ function Comment(){
     <div>
       <WriteComment handleCommentSubmit={handleCommentSubmit} nextId={nextId} />
       <CommentBoard users={users} onRemove={onRemove} onEdit={onEdit}/>
+      {isModalOpen && (
+        <Modal password={password} handlePasswordChange={handlePasswordChange} onConfirm={handlePasswordSubmit} onCancel={onCancel}/> 
+        
+      )}
+    </div>
+  );
+}
+
+function Modal({password, handlePasswordChange, onConfirm, onCancel}) {
+  return (
+    <div className="modal">
+      <div className="modal-content">
+        <input type="text" placeholder="비밀번호" value={password} onChange={handlePasswordChange} />
+        <div className="modal-buttons">
+          <button onClick={onConfirm}>확인</button>
+          <button onClick={onCancel}>취소</button>
+        </div>
+      </div>
     </div>
   );
 }
